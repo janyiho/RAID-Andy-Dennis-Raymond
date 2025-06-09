@@ -1,5 +1,4 @@
 using WebApiDemo.Exceptions;
-using WebApiDemo.Models;
 
 namespace WebApiDemo.Models;
 
@@ -16,7 +15,7 @@ public class MatchEventModel
     {
         MatchId = matchScore.MatchId;
         _scores = matchScore.Scores;
-        _isSecondHalf = _scores.Contains(";");
+        _isSecondHalf = _scores.Contains(';');
         var parts = _scores.Split(';');
         _firstHalf = parts[0];
         _secondHalf = parts.Length > 1 ? parts[1] : "";
@@ -32,7 +31,9 @@ public class MatchEventModel
     private static string CancelGoal(string score, char team)
     {
         if (string.IsNullOrEmpty(score) || !score.EndsWith(team))
+        {
             throw new InvalidMatchEventException($"Cannot cancel {(team == 'H' ? "home" : "away")} goal: last score is not from {(team == 'H' ? "home" : "away")} team");
+        }
         return score.Remove(score.Length - 1);
     }
 
@@ -40,39 +41,62 @@ public class MatchEventModel
 
     private (string firstHalf, string secondHalf) HandleHomeGoal(string firstHalf, string secondHalf)
     {
-        if (_isSecondHalf) secondHalf = AddGoal(secondHalf, 'H');
-        else firstHalf = AddGoal(firstHalf, 'H');
+        if (_isSecondHalf)
+        {
+            secondHalf = AddGoal(secondHalf, 'H');
+        }
+        else
+        {
+            firstHalf = AddGoal(firstHalf, 'H');
+        }
         return (firstHalf, secondHalf);
     }
 
     private (string firstHalf, string secondHalf) HandleAwayGoal(string firstHalf, string secondHalf)
     {
-        if (_isSecondHalf) secondHalf = AddGoal(secondHalf, 'A');
-        else firstHalf = AddGoal(firstHalf, 'A');
+        if (_isSecondHalf)
+        {
+            secondHalf = AddGoal(secondHalf, 'A');
+        }
+        else
+        {
+            firstHalf = AddGoal(firstHalf, 'A');
+        }
         return (firstHalf, secondHalf);
     }
 
     private (string firstHalf, string secondHalf) HandleCancelHomeGoal(string firstHalf, string secondHalf)
     {
         if (_isSecondHalf && !string.IsNullOrEmpty(secondHalf))
+        {
             secondHalf = CancelGoal(secondHalf, 'H');
+        }
         else
+        {
             firstHalf = CancelGoal(firstHalf, 'H');
+        }
         return (firstHalf, secondHalf);
     }
 
     private (string firstHalf, string secondHalf) HandleCancelAwayGoal(string firstHalf, string secondHalf)
     {
         if (_isSecondHalf && !string.IsNullOrEmpty(secondHalf))
+        {
             secondHalf = CancelGoal(secondHalf, 'A');
+        }
         else
+        {
             firstHalf = CancelGoal(firstHalf, 'A');
+        }
         return (firstHalf, secondHalf);
     }
 
     private (string firstHalf, string secondHalf) HandleNextPeriod(string firstHalf, string secondHalf)
     {
-        if (!_isSecondHalf) firstHalf += ";";
+        if (!_isSecondHalf)
+        {
+            firstHalf += ";";
+        }
         return (firstHalf, secondHalf);
     }
 
